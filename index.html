@@ -8,35 +8,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <!-- OTPAuth Library CDN -->
   <script src="https://unpkg.com/otpauth/dist/otpauth.umd.min.js"></script>
   <style>
     :root {
       --background: 220 15% 10%;
       --foreground: 210 40% 98%;
-      --card: 220 18% 10%;
-      --card-foreground: 210 40% 98%;
+      --card: 220 18% 12%;
       --primary: 175 80% 50%;
       --primary-foreground: 220 20% 7%;
       --secondary: 220 15% 15%;
       --secondary-foreground: 210 40% 98%;
-      --muted: 220 15% 18%;
       --muted-foreground: 215 20% 55%;
-      --accent: 175 80% 50%;
-      --accent-foreground: 220 20% 7%;
       --border: 220 15% 20%;
-      --input: 220 15% 15%;
-      --ring: 175 80% 50%;
-      --radius: 0.75rem;
       --glass-border: 220 15% 25%;
     }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
+
+    *:focus { outline: none; }
+
     body {
       background-color: hsl(var(--background));
       color: hsl(var(--foreground));
@@ -44,89 +40,97 @@
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
     }
-    .font-mono {
-      font-family: 'JetBrains Mono', monospace;
-    }
+
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
     .glass {
       background-color: hsl(var(--card) / 0.8);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid hsl(var(--glass-border));
     }
+
     .glow-primary {
       box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.5),
                   0 0 80px -20px hsl(var(--primary) / 0.3);
     }
-    .glow-text {
-      text-shadow: 0 0 30px hsl(var(--primary) / 0.6);
-    }
+
+    .glow-text { text-shadow: 0 0 30px hsl(var(--primary) / 0.6); }
+
     .gradient-text {
-      background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+      background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.4); }
-      50% { box-shadow: 0 0 40px -5px hsl(var(--primary) / 0.6); }
-    }
-    .animate-pulse-glow {
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in {
-      animation: fade-in 0.5s ease-out;
-    }
+
     .bg-overlay {
       position: fixed;
       inset: 0;
       background: linear-gradient(to bottom right, hsl(var(--primary) / 0.02), transparent);
       pointer-events: none;
     }
+
     .container {
       max-width: 32rem;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1rem;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
-    .footer {
-      position: absolute;
-      bottom: 1.5rem;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 0.875rem;
-      color: hsl(var(--muted-foreground));
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    /* Key Input Styles */
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.4); }
+      50% { box-shadow: 0 0 40px -5px hsl(var(--primary) / 0.6); }
+    }
+
+    @keyframes copy-flash {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); box-shadow: 0 0 60px -10px hsl(var(--primary) / 0.8); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes check-pop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-fade-in { animation: fade-in 0.5s ease-out; }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-copy-flash { animation: copy-flash 0.3s ease-out; }
+    .animate-check-pop { animation: check-pop 0.3s ease-out forwards; }
+
     .icon-box {
       display: inline-flex;
       padding: 1rem;
       border-radius: 1rem;
       background-color: hsl(var(--primary) / 0.1);
     }
+
     .title {
       font-size: 2.5rem;
       font-weight: 700;
       color: hsl(var(--foreground));
     }
+
     .subtitle {
       color: hsl(var(--muted-foreground));
       max-width: 28rem;
-      margin: 0 auto;
+      margin: 1rem auto 0;
       font-size: 1.125rem;
       line-height: 1.6;
     }
-    .input-wrapper {
-      position: relative;
-    }
+
+    .input-wrapper { position: relative; }
+
     .input-icon {
       position: absolute;
       left: 1rem;
@@ -134,6 +138,7 @@
       transform: translateY(-50%);
       color: hsl(var(--muted-foreground));
     }
+
     .input {
       width: 100%;
       padding: 1rem 3.5rem 1rem 3rem;
@@ -146,13 +151,14 @@
       outline: none;
       transition: all 0.2s;
     }
-    .input::placeholder {
-      color: hsl(var(--muted-foreground));
-    }
+
+    .input::placeholder { color: hsl(var(--muted-foreground)); }
+
     .input:focus {
       border-color: hsl(var(--primary));
       box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
     }
+
     .eye-btn {
       position: absolute;
       right: 1rem;
@@ -164,9 +170,9 @@
       cursor: pointer;
       transition: color 0.2s;
     }
-    .eye-btn:hover {
-      color: hsl(var(--foreground));
-    }
+
+    .eye-btn:hover { color: hsl(var(--foreground)); }
+
     .submit-btn {
       width: 100%;
       display: flex;
@@ -183,17 +189,12 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .submit-btn:hover {
-      filter: brightness(1.1);
-    }
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .security-box {
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-    }
+
+    .submit-btn:hover { filter: brightness(1.1); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .security-box { border-radius: 0.75rem; padding: 1.5rem; }
+
     .security-header {
       display: flex;
       align-items: center;
@@ -202,22 +203,22 @@
       font-weight: 500;
       margin-bottom: 1rem;
     }
+
     .security-list {
       list-style: none;
       font-size: 0.875rem;
       color: hsl(var(--muted-foreground));
     }
+
     .security-list li {
       display: flex;
       align-items: flex-start;
       gap: 0.5rem;
       margin-bottom: 0.5rem;
     }
-    .security-list .dot {
-      color: hsl(var(--primary));
-      margin-top: 0.25rem;
-    }
-    /* TOTP Display Styles */
+
+    .security-list .dot { color: hsl(var(--primary)); margin-top: 0.25rem; }
+
     .totp-header {
       display: flex;
       align-items: center;
@@ -225,16 +226,19 @@
       gap: 0.75rem;
       margin-bottom: 2rem;
     }
+
     .totp-icon-box {
       padding: 0.75rem;
       border-radius: 0.75rem;
       background-color: hsl(var(--primary) / 0.1);
     }
+
     .totp-title {
       font-size: 1.5rem;
       font-weight: 600;
       color: hsl(var(--foreground));
     }
+
     .code-box {
       position: relative;
       cursor: pointer;
@@ -243,16 +247,18 @@
       text-align: center;
       transition: all 0.3s;
     }
-    .code-box:hover {
-      border-color: hsl(var(--primary) / 0.5);
-    }
+
+    .code-box:hover { border-color: hsl(var(--primary) / 0.5); }
+
     .code-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 4rem;
+      font-size: 3.5rem;
       font-weight: 700;
       letter-spacing: 0.3em;
       color: hsl(var(--foreground));
+      user-select: none;
     }
+
     .copy-icon {
       position: absolute;
       top: 1rem;
@@ -261,17 +267,17 @@
       transition: opacity 0.2s;
       color: hsl(var(--muted-foreground));
     }
-    .code-box:hover .copy-icon {
-      opacity: 1;
-    }
+
+    .code-box:hover .copy-icon { opacity: 1; }
+
     .copy-hint {
       color: hsl(var(--muted-foreground));
       margin-top: 1rem;
       font-size: 0.875rem;
     }
-    .timer-section {
-      margin-top: 1.5rem;
-    }
+
+    .timer-section { margin-top: 1.5rem; }
+
     .timer-header {
       display: flex;
       justify-content: space-between;
@@ -279,17 +285,20 @@
       color: hsl(var(--muted-foreground));
       margin-bottom: 0.5rem;
     }
+
     .timer-bar {
       height: 0.5rem;
       border-radius: 9999px;
       background-color: hsl(var(--secondary));
       overflow: hidden;
     }
+
     .timer-progress {
       height: 100%;
-      background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+      background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)));
       transition: width 1s linear;
     }
+
     .new-key-btn {
       width: 100%;
       display: flex;
@@ -306,10 +315,11 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .new-key-btn:hover {
-      background-color: hsl(var(--secondary) / 0.8);
-    }
+
+    .new-key-btn:hover { background-color: hsl(var(--secondary) / 0.8); }
+
     .hidden { display: none; }
+
     @media (max-width: 640px) {
       .title { font-size: 2rem; }
       .code-text { font-size: 2.5rem; letter-spacing: 0.2em; }
@@ -319,103 +329,77 @@
 <body>
   <div class="bg-overlay"></div>
   <main class="container">
-    <div style="width: 100%; max-width: 32rem;">
-  <!-- KEY INPUT SECTION -->
-  <div id="key-input-section" class="animate-fade-in">
-    <div style="text-align: center; margin-bottom: 2rem;">
-      <div class="icon-box glow-primary animate-pulse-glow" style="margin-bottom: 1rem;">
-        <i data-lucide="shield-check" style="width: 48px; height: 48px; color: hsl(var(--primary));"></i>
+    <div style="width: 100%;">
+      <!-- KEY INPUT SECTION -->
+      <div id="key-input-section" class="animate-fade-in">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="icon-box glow-primary animate-pulse-glow" style="margin-bottom: 1rem;">
+            <i data-lucide="shield-check" style="width: 48px; height: 48px; color: hsl(var(--primary));"></i>
+          </div>
+          <h1 class="title"><span class="gradient-text">2FA</span> Authenticator</h1>
+          <p class="subtitle">Enter your secret key to generate a secure authentication code. Your key is never stored or transmitted.</p>
+        </div>
+        <form id="key-form" style="margin-bottom: 1.5rem;">
+          <div class="input-wrapper" style="margin-bottom: 1.5rem;">
+            <i data-lucide="key" class="input-icon" style="width: 20px; height: 20px;"></i>
+            <input type="password" id="secret-key-input" class="input font-mono" placeholder="Enter your secret key..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <button type="button" id="toggle-visibility" class="eye-btn">
+              <i data-lucide="eye" style="width: 20px; height: 20px;"></i>
+            </button>
+          </div>
+          <button type="submit" id="generate-btn" class="submit-btn glow-primary" disabled>
+            Generate Code
+            <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
+          </button>
+        </form>
+        <div class="glass security-box">
+          <div class="security-header">
+            <i data-lucide="lock" style="width: 20px; height: 20px;"></i>
+            <span>Security Notice</span>
+          </div>
+          <ul class="security-list">
+            <li><span class="dot">•</span>Your secret key is processed locally in your browser</li>
+            <li><span class="dot">•</span>No data is stored, saved, or transmitted to any server</li>
+            <li><span class="dot">•</span>You must re-enter your key each time you visit</li>
+          </ul>
+        </div>
       </div>
-      <h1 class="title">
-        <span class="gradient-text">2FA</span> Authenticator
-      </h1>
-      <p class="subtitle" style="margin-top: 1rem;">
-        Enter your secret key to generate a secure authentication code. 
-        Your key is never stored or transmitted.
-      </p>
-    </div>
-    <form id="key-form" style="margin-bottom: 1.5rem;">
-      <div class="input-wrapper" style="margin-bottom: 1.5rem;">
-        <i data-lucide="key" class="input-icon" style="width: 20px; height: 20px;"></i>
-        <input 
-          type="password" 
-          id="secret-key-input"
-          class="input font-mono"
-          placeholder="Enter your secret key..."
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-        />
-        <button type="button" id="toggle-visibility" class="eye-btn">
-          <i data-lucide="eye" style="width: 20px; height: 20px;"></i>
+
+      <!-- TOTP DISPLAY SECTION -->
+      <div id="totp-section" class="animate-fade-in hidden">
+        <div class="totp-header">
+          <div class="totp-icon-box glow-primary">
+            <i data-lucide="shield" style="width: 32px; height: 32px; color: hsl(var(--primary));"></i>
+          </div>
+          <h2 class="totp-title">Your Authentication Code</h2>
+        </div>
+        <div class="glass code-box glow-primary" id="code-box">
+          <div class="copy-icon" id="copy-icon-container">
+            <i data-lucide="copy" id="copy-icon" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div class="code-text glow-text" id="totp-code">000 000</div>
+          <p class="copy-hint" id="copy-hint">Click to copy</p>
+        </div>
+        <div class="timer-section">
+          <div class="timer-header">
+            <span>Time remaining</span>
+            <span class="font-mono" id="timer-text">30s</span>
+          </div>
+          <div class="timer-bar">
+            <div class="timer-progress" id="timer-progress" style="width: 100%;"></div>
+          </div>
+        </div>
+        <button id="new-key-btn" class="new-key-btn">
+          <i data-lucide="refresh-cw" style="width: 20px; height: 20px;"></i>
+          Enter New Key
         </button>
       </div>
-      <button type="submit" id="generate-btn" class="submit-btn glow-primary" disabled>
-        Generate Code
-        <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
-      </button>
-    </form>
-    <div class="glass security-box">
-      <div class="security-header">
-        <i data-lucide="lock" style="width: 20px; height: 20px;"></i>
-        <span>Security Notice</span>
-      </div>
-      <ul class="security-list">
-        <li>
-          <span class="dot">•</span>
-          Your secret key is processed locally in your browser
-        </li>
-        <li>
-          <span class="dot">•</span>
-          No data is stored, saved, or transmitted to any server
-        </li>
-        <li>
-          <span class="dot">•</span>
-          You must re-enter your key each time you visit
-        </li>
-      </ul>
     </div>
-  </div>
-  <!-- TOTP DISPLAY SECTION -->
-  <div id="totp-section" class="animate-fade-in hidden">
-    <div class="totp-header">
-      <div class="totp-icon-box glow-primary">
-        <i data-lucide="shield" style="width: 32px; height: 32px; color: hsl(var(--primary));"></i>
-      </div>
-      <h2 class="totp-title">Your Authentication Code</h2>
-    </div>
-    <div class="glass code-box glow-primary" id="code-box">
-      <div class="code-text glow-text" id="totp-code">123 456</div>
-      <div class="copy-icon">
-        <i data-lucide="copy" style="width: 24px; height: 24px;"></i>
-      </div>
-      <p class="copy-hint">Click to copy</p>
-    </div>
-    <div class="timer-section">
-      <div class="timer-header">
-        <span>Time remaining</span>
-        <span class="font-mono" id="timer-text">30s</span>
-      </div>
-      <div class="timer-bar">
-        <div class="timer-progress" id="timer-progress" style="width: 100%;"></div>
-      </div>
-    </div>
-    <button id="new-key-btn" class="new-key-btn">
-      <i data-lucide="refresh-cw" style="width: 20px; height: 20px;"></i>
-      Enter New Key
-    </button>
-  </div>
-</div>
-
   </main>
-  <footer class="footer">
-    
-  </footer>
+
   <script>
-    // Initialize Lucide icons
     lucide.createIcons();
-    // Elements
+
     const keyInputSection = document.getElementById('key-input-section');
     const totpSection = document.getElementById('totp-section');
     const secretKeyInput = document.getElementById('secret-key-input');
@@ -427,11 +411,14 @@
     const timerProgress = document.getElementById('timer-progress');
     const codeBox = document.getElementById('code-box');
     const newKeyBtn = document.getElementById('new-key-btn');
+    const copyIconContainer = document.getElementById('copy-icon-container');
+    const copyHint = document.getElementById('copy-hint');
+
     let secretKey = '';
     let timerInterval = null;
     let totp = null;
-    // Toggle password visibility
     let showKey = false;
+
     toggleVisibility.addEventListener('click', () => {
       showKey = !showKey;
       secretKeyInput.type = showKey ? 'text' : 'password';
@@ -440,60 +427,80 @@
         : '<i data-lucide="eye" style="width: 20px; height: 20px;"></i>';
       lucide.createIcons();
     });
-    // Enable/disable button
+
     secretKeyInput.addEventListener('input', () => {
       generateBtn.disabled = !secretKeyInput.value.trim();
     });
-    // Form submit
+
     keyForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (secretKeyInput.value.trim()) {
         secretKey = secretKeyInput.value.trim();
-        totp = new OTPAuth.TOTP({
-          algorithm: 'SHA1',
-          digits: 6,
-          period: 30,
-          secret: OTPAuth.Secret.fromBase32(secretKey)
-        });
-        showTOTP();
+        try {
+          totp = new OTPAuth.TOTP({
+            algorithm: 'SHA1',
+            digits: 6,
+            period: 30,
+            secret: OTPAuth.Secret.fromBase32(secretKey)
+          });
+          showTOTP();
+        } catch (err) {
+          console.error('Invalid key');
+        }
       }
     });
-    // Show TOTP section
+
     function showTOTP() {
       keyInputSection.classList.add('hidden');
       totpSection.classList.remove('hidden');
       generateCode();
       startTimer();
     }
-    // Generate TOTP code
+
     function generateCode() {
       if (totp) {
-        const code = totp.generate();
-        totpCode.textContent = code.slice(0, 3) + ' ' + code.slice(3);
+        try {
+          const code = totp.generate();
+          totpCode.textContent = code.slice(0, 3) + ' ' + code.slice(3);
+        } catch {
+          totpCode.textContent = '--- ---';
+        }
       }
     }
-    // Timer
+
     function startTimer() {
       const updateTimer = () => {
         const now = Math.floor(Date.now() / 1000);
         const remaining = 30 - (now % 30);
         timerText.textContent = remaining + 's';
         timerProgress.style.width = (remaining / 30 * 100) + '%';
-        if (remaining === 30) {
-          generateCode();
-        }
+        if (remaining === 30) generateCode();
       };
-      
       updateTimer();
       timerInterval = setInterval(updateTimer, 1000);
     }
-    // Copy code
+
     codeBox.addEventListener('click', () => {
       const code = totpCode.textContent.replace(' ', '');
       navigator.clipboard.writeText(code);
-      alert('Code copied!');
+      
+      // Animation
+      codeBox.classList.add('animate-copy-flash');
+      copyIconContainer.innerHTML = '<i data-lucide="check" class="animate-check-pop" style="width: 24px; height: 24px; color: hsl(var(--primary));"></i>';
+      copyHint.textContent = 'Copied!';
+      lucide.createIcons();
+
+      setTimeout(() => {
+        codeBox.classList.remove('animate-copy-flash');
+      }, 300);
+
+      setTimeout(() => {
+        copyIconContainer.innerHTML = '<i data-lucide="copy" style="width: 24px; height: 24px;"></i>';
+        copyHint.textContent = 'Click to copy';
+        lucide.createIcons();
+      }, 2000);
     });
-    // New key
+
     newKeyBtn.addEventListener('click', () => {
       if (timerInterval) clearInterval(timerInterval);
       totpSection.classList.add('hidden');
@@ -501,7 +508,6 @@
       secretKeyInput.value = '';
       generateBtn.disabled = true;
     });
-
   </script>
 </body>
 </html>
